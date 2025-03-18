@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+
+    <!-- Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: #fff;
+        }
+
+        .container {
+            max-width: 600px;
+        }
+
+        .input-group {
+            margin-top: 50px;
+            margin-bottom: 30px;
+        }
+
+        .input-group .form-control {
+            border-radius: 50px;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        .input-group button {
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 16px;
+        }
+
+        #weatherCard {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        #weatherCard h3 {
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        #weatherCard p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        #pic {
+            width: 120px;
+            height: auto;
+            margin-top: 20px;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: #fff;
+        }
+
+        footer p {
+            font-size: 14px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+            transition: transform 0.2s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container text-center">
+    <h1 class="mb-4">Weather App</h1>
+    <div class="input-group w-75 mx-auto">
+        <input type="text" class="form-control" placeholder="Enter city name" id="in" aria-label="City Name">
+        <button class="btn btn-primary" id="searchBtn">Search</button>
+    </div>
+
+    <div id="weatherCard">
+        <h3 id="location"></h3>
+        <p id="temp"></p>
+        <p id="details"></p>
+        <p id="humidity"></p>
+        <p id="pressure"></p>
+        <p id="wind"></p>
+        <p id="visibility"></p>
+        <p id="feels-like"></p>
+        <p id="sea-level"></p>
+        <img id="pic" src="" alt="Weather Icon">
+    </div>
+</div>
+
+<footer>
+    <center>
+        <p>&copy; All rights reserved by Suzen Kumar Mohanty. Note: This is for practice/project purposes only, not for sale.</p>
+    </center>
+</footer>
+
+<script>
+    const SearchBtn = document.getElementById('searchBtn');
+    const In = document.getElementById('in');
+    const Temp = document.getElementById('temp');
+    const Details = document.getElementById('details');
+    const Location = document.getElementById('location');
+    const Humidity = document.getElementById('humidity');
+    const Pressure = document.getElementById('pressure');
+    const Windspeed = document.getElementById('wind');
+    const Visibility = document.getElementById('visibility');
+    const Feels_like = document.getElementById('feels-like');
+    const Sea_level = document.getElementById('sea-level');
+    const Pic = document.getElementById('pic');
+
+    async function checkWeather(city){
+        const apiKey = '781e741fbc8d4e08041a1d877b5d7270';
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data.cod !== 200) {
+                alert("City not found");
+                return;
+            }
+
+            Temp.innerHTML = `Temperature: ${Math.round(data.main.temp)}°C`;
+            Pressure.innerHTML = `Pressure: ${data.main.pressure} hPa`;
+            Feels_like.innerHTML = `Feels Like: ${Math.round(data.main.feels_like)}°C`;
+            Humidity.innerHTML = `Humidity: ${data.main.humidity}%`;
+            Details.innerHTML = `Condition: ${data.weather[0].main}`;
+            Location.innerHTML = `Location: ${data.name}`;
+            Windspeed.innerHTML = `Wind Speed: ${data.wind.speed} m/s`;
+            Visibility.innerHTML = `Visibility: ${data.visibility / 1000} km`;
+            Sea_level.innerHTML = data.main.sea_level ? `Sea Level: ${data.main.sea_level} hPa` : '';
+            document.getElementById('weatherCard').style.display = 'block';
+            
+            const weatherCondition = data.weather[0].main;
+            const weatherImages = {
+                'Clear': "https://openweathermap.org/img/wn/01d.png",
+                'Clouds': "https://openweathermap.org/img/wn/03d.png",
+                'Rain': "https://openweathermap.org/img/wn/10d.png",
+                'Snow': "https://openweathermap.org/img/wn/13d.png",
+                'Drizzle': "https://openweathermap.org/img/wn/09d.png",
+                'Haze': "https://openweathermap.org/img/wn/50d.png"
+            };
+            Pic.src = weatherImages[weatherCondition] || "https://openweathermap.org/img/wn/01d.png";
+        } catch (error) {
+            alert("Error fetching weather data");
+        }
+    }
+
+    SearchBtn.addEventListener('click', () => {
+        checkWeather(In.value);
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
